@@ -58,7 +58,7 @@ void loop() {
   
   
   //checks ultrasonics twice for reliability
-  command = (checkUltraSonics()==checkUltrasonics())? CMD_STOP: receiveCommand();
+  command = (checkUltraSonics()&&checkUltrasonics())? CMD_STOP: receiveCommand();
   
   
   //execute received command
