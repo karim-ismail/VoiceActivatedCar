@@ -2,14 +2,14 @@
 #include <SPI.h> // Not actualy used but needed to compile
 
 //motor pins
-#define RIGHT_SPEED 6
-#define RIGHT_DIRECTION 7
-#define LEFT_SPEED 10
-#define LEFT_DIRECTION 9
+#define RIGHT_SPEED 5
+#define RIGHT_DIRECTION 6
+#define LEFT_SPEED 9
+#define LEFT_DIRECTION 10
 
 //arduino pins
-#define ECHO_PIN
-#define TRIG_PIN
+#define ECHO_PIN 12
+#define TRIG_PIN 1
 
 //speeds
 #define ZERO_SPEED 0
@@ -21,6 +21,7 @@
 #define REVERSE 0
 
 #define DIR_DELAY 1000
+#define SAFETY_THRESHOLD 5
 
 //commands
 #define CMD_RIGHT 1//add more commands for different speeds if u want to
@@ -30,6 +31,7 @@
 #define CMD_CDONUT  5
 #define CMD_CCDONUT 6
 #define CMD_STOP 7
+
 
 int command;
 RH_ASK rf_driver;
