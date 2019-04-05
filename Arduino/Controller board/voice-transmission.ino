@@ -14,7 +14,7 @@ byte dataType = 4;
 char t[3];
 String incomingByte = "";
 
-String show = " Type: \n 1 to stop \n 2 to Forward \n 3 to Turn Left \n 4 to Turn Right \n 5 to Reverse  \n 6 to Donuts  \n ";
+String show = " Type: \n 2 to stop \n 1 to Forward \n 5 to Turn Left \n 6 to Turn Right \n 3 to Reverse  \n 4 to Donuts  \n ";
 int i = 1;
 void setup() {
   Serial.begin(9600);
@@ -41,7 +41,7 @@ void loop() {
         i=1;
 }
 }
-
+/*
 // this function runs every time serial data is available. 
 // in the serial buffer after a loop.
 void serialEvent()
@@ -79,4 +79,4 @@ void serialEvent()
           driver.waitPacketSent();
                
     
-}
+}*/
