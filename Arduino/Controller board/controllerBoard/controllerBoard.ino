@@ -1,15 +1,15 @@
 #include <RH_ASK.h>
-#include <SPI.h> // Not actualy used but needed to compile
+#include <SPI.h> 
 
 //motor pins
-#define RIGHT_SPEED 5
-#define RIGHT_DIRECTION 6
-#define LEFT_SPEED 9
-#define LEFT_DIRECTION 10
+#define RIGHT_SPEED 4
+#define RIGHT_DIRECTION 5
+#define LEFT_SPEED 8
+#define LEFT_DIRECTION 9
 
 //arduino pins
-#define ECHO_PIN 12
-#define TRIG_PIN 1
+#define ECHO_PIN 13
+#define TRIG_PIN 2
 
 //speeds
 #define ZERO_SPEED 255
@@ -21,16 +21,16 @@
 #define REVERSE 0
 
 #define DIR_DELAY 1000
-#define SAFETY_THRESHOLD 5
+#define SAFETY_THRESHOLD 8
 
 //commands
-#define CMD_RIGHT 1//add more commands for different speeds if u want to
-#define CMD_LEFT  2
-#define CMD_FORWARD 3
-#define CMD_REVERSE 4
-#define CMD_CDONUT  5
-#define CMD_CCDONUT 6
-#define CMD_STOP 7
+#define CMD_RIGHT 6//add more commands for different speeds if u want to
+#define CMD_LEFT  5
+#define CMD_FORWARD 1
+#define CMD_REVERSE 3
+#define CMD_CDONUT  7
+#define CMD_CCDONUT 4
+#define CMD_STOP 2
 
 
 int command;
@@ -45,27 +45,19 @@ void setup() {
   initMotors();
   initUltrasonics();
   stopMotors();
-  command = CMD_STOP
+  command = CMD_STOP;
 
 }
 
 void loop() {
-  //wait for input (needs to be tested)
-  if (Serial.available()){
-    command = Serial.read();
-    delay(DIR_DELAY); //always delay when changing direction
-  }
-  
-  //receive command
-  
-  
   //checks ultrasonics twice for reliability
-  command = (checkUltraSonics()&&checkUltrasonics())? CMD_STOP: receiveCommand();
-  
+  command = (checkUltraSonics()&&checkUltraSonics())? CMD_STOP: receiveCommand(command);
+  delay(100);
   
   //execute received command
-  executeCommand(command);
-  
+  Serial.print("executing command: ");
+  Serial.println(command);
+ executeCommand(command);  
   
 }
 
@@ -133,7 +125,7 @@ void stopMotors(){
 void clockwiseDonut(int speed){
  digitalWrite(RIGHT_DIRECTION, REVERSE);
  digitalWrite(LEFT_DIRECTION, FORWARD);
- analogWrite(RIGHT_SPEED, speed);
+ analogWrite(RIGHT_SPEED, ZERO_SPEED);
  analogWrite(LEFT_SPEED, speed);
 
 }
@@ -142,7 +134,7 @@ void counterClockwiseDonut(int speed){
  digitalWrite(RIGHT_DIRECTION, FORWARD);
  digitalWrite(LEFT_DIRECTION, REVERSE);
  analogWrite(RIGHT_SPEED, speed);
- analogWrite(LEFT_SPEED, speed);
+ analogWrite(LEFT_SPEED, ZERO_SPEED);
 
 }
 
@@ -177,30 +169,45 @@ void moveForward(int speed){
 void moveBackwards(int speed){
  digitalWrite(RIGHT_DIRECTION, REVERSE);
  digitalWrite(LEFT_DIRECTION, REVERSE);
- analogWrite(RIGHT_SPEED, speed);
- analogWrite(LEFT_SPEED, speed);
+ analogWrite(RIGHT_SPEED, ZERO_SPEED);
+ analogWrite(LEFT_SPEED, ZERO_SPEED);
 
 }
 
+//checks the ultrasonic sensor and returns true if we're closer than the safety threshold
 boolean checkUltraSonics(){
     digitalWrite(TRIG_PIN, LOW);
-    delayMicroseconds(2);
+    delayMicroseconds(5);
     digitalWrite(TRIG_PIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIG_PIN, LOW);
-    duration = pulseIn(ECHO_PIN, HIGH);
+    int duration = pulseIn(ECHO_PIN, HIGH);
+   
     // Calculating the distance
-    distance= duration*0.034/2;
-    return (distance < SAFETY_THRESHOLD) //if unsafe returns true
+    duration= duration*0.034/2;
+    return (duration < SAFETY_THRESHOLD); //if unsafe returns true
+   
     
 }
 
-int receiveCommand(){
-  buflen = sizeof(buf);
+//Receive a command from the 433 MHz receiver and do some maths to change it to an int
+int receiveCommand(int command){
+  //delay(200);
+ uint8_t buf[RH_ASK_MAX_MESSAGE_LEN] = {0};
+  uint8_t buflen = sizeof(buf);
   if (rf_driver.recv(buf, &buflen)){
-    command = figureOutWhatItIs(buff); 
-  }
-}
+    Serial.print("received: ");
+    Serial.println((buf[0]-48));
+  return ( (buf[0]-48));
 
+  }
+  return command;
+ 
+  
+}
+//
+//boolean multiCheckUltraSonics(){
+//  return checkUltraSonics()||checkUltraSonics()||checkUltraSonics()||checkUltraSonics();
+//}
 
   
