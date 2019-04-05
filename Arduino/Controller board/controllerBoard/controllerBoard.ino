@@ -12,9 +12,9 @@
 #define TRIG_PIN 1
 
 //speeds
-#define ZERO_SPEED 0
+#define ZERO_SPEED 255
 #define HALF_SPEED 127
-#define FULL_SPEED 255
+#define FULL_SPEED 0
 
 //motor states
 #define FORWARD 1
@@ -124,8 +124,8 @@ void initUltrasonics(){
 void stopMotors(){
   digitalWrite( RIGHT_SPEED, LOW );
   digitalWrite( RIGHT_DIRECTION, LOW );
-  digitalWrite( LEFT_SPEED, LOW );
-  digitalWrite( LEFT_DIRECTION, LOW );
+  digitalWrite( LEFT_SPEED, ZERO_SPEED );
+  digitalWrite( LEFT_DIRECTION, ZERO_SPEED );
   
 }
 
@@ -139,8 +139,8 @@ void clockwiseDonut(int speed){
 }
 //Does a counter-clockwise donut
 void counterClockwiseDonut(int speed){
- digitalWrite(RIGHT_DIRECTION, REVERSE);
- digitalWrite(LEFT_DIRECTION, FORWARD);
+ digitalWrite(RIGHT_DIRECTION, FORWARD);
+ digitalWrite(LEFT_DIRECTION, REVERSE);
  analogWrite(RIGHT_SPEED, speed);
  analogWrite(LEFT_SPEED, speed);
 
