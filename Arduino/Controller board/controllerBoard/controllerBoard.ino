@@ -24,7 +24,7 @@
 #define SAFETY_THRESHOLD 8
 
 //commands
-#define CMD_RIGHT 6//add more commands for different speeds if u want to
+#define CMD_RIGHT 6
 #define CMD_LEFT  5
 #define CMD_FORWARD 1
 #define CMD_REVERSE 3
@@ -32,14 +32,13 @@
 #define CMD_CCDONUT 4
 #define CMD_STOP 2
 
-
+//global variables
 int command;
 RH_ASK rf_driver;
-uint8_t buf[24];
-uint8_t buflen;
+
 
 void setup() {
-  // setting pins to output and writing 0 to all
+  // initializing components and global variables
   Serial.begin( 9600 );
   if (!rf_driver.init()) Serial.println(" ASK Driver init failed");
   initMotors();
@@ -55,8 +54,6 @@ void loop() {
   delay(100);
   
   //execute received command
-  Serial.print("executing command: ");
-  Serial.println(command);
  executeCommand(command);  
   
 }
@@ -107,6 +104,7 @@ void initMotors(){
   pinMode( LEFT_DIRECTION, OUTPUT );
 }
 
+//initializes the ultrasonics pins
 void initUltrasonics(){
   pinMode(TRIG_PIN, OUTPUT); 
   pinMode(ECHO_PIN, INPUT); 
@@ -192,7 +190,6 @@ boolean checkUltraSonics(){
 
 //Receive a command from the 433 MHz receiver and do some maths to change it to an int
 int receiveCommand(int command){
-  //delay(200);
  uint8_t buf[RH_ASK_MAX_MESSAGE_LEN] = {0};
   uint8_t buflen = sizeof(buf);
   if (rf_driver.recv(buf, &buflen)){
@@ -205,9 +202,6 @@ int receiveCommand(int command){
  
   
 }
-//
-//boolean multiCheckUltraSonics(){
-//  return checkUltraSonics()||checkUltraSonics()||checkUltraSonics()||checkUltraSonics();
-//}
+
 
   
